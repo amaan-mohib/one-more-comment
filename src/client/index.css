@@ -1,0 +1,223 @@
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Shade&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.95 0.01 268);
+  --foreground: oklch(0.15 0.08 268);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.08 268);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.08 268);
+  --primary: oklch(0.65 0.30 50);
+  --primary-foreground: oklch(0.15 0.08 268);
+  --secondary: oklch(0.70 0.25 280);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.90 0.02 268);
+  --muted-foreground: oklch(0.50 0.05 268);
+  --accent: oklch(0.60 0.28 130);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.80 0.05 268);
+  --input: oklch(0.96 0.02 268);
+  --ring: oklch(0.65 0.30 50);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.12 0.01 268);
+    --foreground: oklch(0.95 0.02 268);
+    --card: oklch(0.18 0.01 268);
+    --card-foreground: oklch(0.95 0.02 268);
+    --popover: oklch(0.18 0.01 268);
+    --popover-foreground: oklch(0.95 0.02 268);
+    --primary: oklch(0.72 0.28 50);
+    --primary-foreground: oklch(0.12 0.01 268);
+    --secondary: oklch(0.75 0.25 280);
+    --secondary-foreground: oklch(0.12 0.01 268);
+    --muted: oklch(0.30 0.02 268);
+    --muted-foreground: oklch(0.60 0.05 268);
+    --accent: oklch(0.68 0.26 130);
+    --accent-foreground: oklch(0.12 0.01 268);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.35 0.05 268);
+    --input: oklch(0.25 0.02 268);
+    --ring: oklch(0.72 0.28 50);
+    --chart-1: oklch(0.72 0.28 50);
+    --chart-2: oklch(0.75 0.25 280);
+    --chart-3: oklch(0.68 0.26 130);
+    --chart-4: oklch(0.70 0.20 40);
+    --chart-5: oklch(0.65 0.22 160);
+    --sidebar: oklch(0.18 0.01 268);
+    --sidebar-foreground: oklch(0.95 0.02 268);
+    --sidebar-primary: oklch(0.72 0.28 50);
+    --sidebar-primary-foreground: oklch(0.12 0.01 268);
+    --sidebar-accent: oklch(0.75 0.25 280);
+    --sidebar-accent-foreground: oklch(0.12 0.01 268);
+    --sidebar-border: oklch(0.35 0.05 268);
+    --sidebar-ring: oklch(0.72 0.28 50);
+  }
+}
+
+@theme inline {
+  --font-sans: 'Bungee Shade', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.ibm-plex-mono-thin {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.ibm-plex-mono-extralight {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.ibm-plex-mono-light {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.ibm-plex-mono-regular {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ibm-plex-mono-medium {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ibm-plex-mono-semibold {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.ibm-plex-mono-bold {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ibm-plex-mono-thin-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.ibm-plex-mono-extralight-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.ibm-plex-mono-light-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.ibm-plex-mono-regular-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ibm-plex-mono-medium-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.ibm-plex-mono-semibold-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.ibm-plex-mono-bold-italic {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+.bungee-shade-regular {
+  font-family: "Bungee Shade", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
