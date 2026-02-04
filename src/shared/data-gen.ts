@@ -71,7 +71,7 @@ function mulberry32(seed: number) {
   };
 }
 
-function shuffle<T>(arr: T[], seed: number) {
+export function shuffle<T>(arr: T[], seed: number) {
   const rng = mulberry32(seed);
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -108,6 +108,7 @@ export function buildTokenRound(raw: string, seed: number) {
 
   if (unique.length !== tokens.length) return null; // has duplicates
   if (unique.length < 4) return null;
+  if (unique.length > 12) return null;
 
   // final safety
   if (unique.some((t) => t.length > 18)) return null;

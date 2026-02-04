@@ -1,5 +1,5 @@
-import { reddit } from '@devvit/web/server';
-import { filterComments } from '../../shared/data-gen';
+import { reddit, redis } from '@devvit/web/server';
+import { filterComments, shuffle } from '../../shared/data-gen';
 
 const subreddits = [
   'AskReddit',
@@ -23,18 +23,26 @@ export const createPost = async () => {
     })
   );
 
-  const comments = [];
-  for (const post of posts.flat()) {
-    const postComments = await reddit
-      .getComments({
-        postId: post.id,
-        limit: 10,
-        pageSize: 10,
-      })
-      .all();
-    comments.push(...postComments);
-  }
   const seed = Date.now() % 100000;
+  const shuffledPosts = shuffle(posts.flat(), seed);
+
+  const comments = [];
+  for (let i = 0; i < shuffledPosts.length; i += 5) {
+    const batch = shuffledPosts.slice(i, i + 5);
+    const batchPromises = batch.map((post) =>
+      reddit
+        .getComments({
+          postId: post.id,
+          limit: 10,
+          pageSize: 10,
+        })
+        .all()
+    );
+    const batchResults = await Promise.all(batchPromises);
+    for (const postComments of batchResults) {
+      comments.push(...postComments);
+    }
+  }
 
   const filteredComments = filterComments(comments, seed);
 
@@ -45,4 +53,12 @@ export const createPost = async () => {
       seed,
     },
   });
+};
+
+export const savePostUserProgress = async (
+  postId: string,
+  userId: string,
+  progress: { round: number; score: number; highScore: number }
+) => {
+  await redis.set(`post_progress_${postId}_${userId}`, JSON.stringify(progress));
 };

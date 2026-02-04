@@ -1,23 +1,19 @@
 import express from 'express';
-import { InitResponse, IncrementResponse, DecrementResponse } from '../shared/types/api';
 import { redis, reddit, createServer, context, getServerPort, cache } from '@devvit/web/server';
-import { createPost } from './core/post';
+import { createPost, savePostUserProgress } from './core/post';
 
 const app = express();
 
-// Middleware for JSON body parsing
 app.use(express.json());
-// Middleware for URL-encoded body parsing
 app.use(express.urlencoded({ extended: true }));
-// Middleware for plain text body parsing
 app.use(express.text());
 
 const router = express.Router();
 
-router.get<{ postId: string }, InitResponse | { status: string; message: string }>(
+router.get<{ postId: string }, { progress: any } | { status: string; message: string }>(
   '/api/init',
   async (_req, res): Promise<void> => {
-    const { postId } = context;
+    const { postId, userId } = context;
 
     if (!postId) {
       console.error('API Init Error: postId not found in devvit context');
@@ -29,16 +25,11 @@ router.get<{ postId: string }, InitResponse | { status: string; message: string 
     }
 
     try {
-      const [count, username] = await Promise.all([
-        redis.get('count'),
-        reddit.getCurrentUsername(),
-      ]);
+      const progressStr = await redis.get(`post_progress_${postId}_${userId}`);
+      const progress = progressStr ? JSON.parse(progressStr) : { round: 0, score: 0, highScore: 0 };
 
       res.json({
-        type: 'init',
-        postId: postId,
-        count: count ? parseInt(count) : 0,
-        username: username ?? 'anonymous',
+        progress,
       });
     } catch (error) {
       console.error(`API Init Error for post ${postId}:`, error);
@@ -48,46 +39,6 @@ router.get<{ postId: string }, InitResponse | { status: string; message: string 
       }
       res.status(400).json({ status: 'error', message: errorMessage });
     }
-  }
-);
-
-router.post<{ postId: string }, IncrementResponse | { status: string; message: string }, unknown>(
-  '/api/increment',
-  async (_req, res): Promise<void> => {
-    const { postId } = context;
-    if (!postId) {
-      res.status(400).json({
-        status: 'error',
-        message: 'postId is required',
-      });
-      return;
-    }
-
-    res.json({
-      count: await redis.incrBy('count', 1),
-      postId,
-      type: 'increment',
-    });
-  }
-);
-
-router.post<{ postId: string }, DecrementResponse | { status: string; message: string }, unknown>(
-  '/api/decrement',
-  async (_req, res): Promise<void> => {
-    const { postId } = context;
-    if (!postId) {
-      res.status(400).json({
-        status: 'error',
-        message: 'postId is required',
-      });
-      return;
-    }
-
-    res.json({
-      count: await redis.incrBy('count', -1),
-      postId,
-      type: 'decrement',
-    });
   }
 );
 
@@ -126,6 +77,62 @@ router.get<{ id: string }, { comment: any } | { status: string; message: string 
     });
   }
 );
+
+router.post('/api/save', async (req, res): Promise<void> => {
+  try {
+    if (!context.postId) {
+      console.error('API Init Error: postId not found in devvit context');
+      res.status(400).json({
+        status: 'error',
+        message: 'postId is required but missing from context',
+      });
+      return;
+    }
+
+    await savePostUserProgress(
+      context.postId!,
+      context.userId!,
+      req.body as { round: number; score: number; highScore: number }
+    );
+
+    res.json({
+      status: 'success',
+      message: `Progress saved for user ${context.userId} in post ${context.postId}`,
+    });
+  } catch (error) {
+    console.error(`Error saving progress: ${error}`);
+    res.status(400).json({
+      status: 'error',
+      message: 'Failed to save progress',
+    });
+  }
+});
+
+router.post('/api/reply', async (req, res): Promise<void> => {
+  try {
+    const { username, postId, subredditName } = context;
+    if (!postId) {
+      console.error('API Reply Error: postId not found in devvit context');
+      res.status(400).json({
+        status: 'error',
+        message: 'postId is required but missing from context',
+      });
+      return;
+    }
+    const body = `u/${username} guessed your comment with ${req.body.accuracy}% accuracy! Play r/${subredditName} to see how well you did!`;
+    await reddit.submitComment({
+      id: req.body.commentId,
+      text: body,
+      runAs: 'APP',
+    });
+  } catch (error) {
+    console.error(`Error creating post: ${error}`);
+    res.status(400).json({
+      status: 'error',
+      message: 'Failed to create post',
+    });
+  }
+});
 
 router.post('/internal/on-app-install', async (_req, res): Promise<void> => {
   try {
