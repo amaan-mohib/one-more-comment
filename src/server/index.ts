@@ -89,6 +89,14 @@ router.post('/api/save', async (req, res): Promise<void> => {
       return;
     }
 
+    if (!context.userId) {
+      res.json({
+        status: 'skipped',
+        message: `Progress skipped`,
+      });
+      return;
+    }
+
     await savePostUserProgress(
       context.postId!,
       context.userId!,
