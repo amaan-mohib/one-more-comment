@@ -10,7 +10,7 @@ const Item = forwardRef(({ id, ...props }: any, ref) => {
     <div
       {...props}
       ref={ref as any}
-      className="px-3 py-1 bg-primary text-white border-3 border-primary font-bold text-sm"
+      className="px-3 py-1 bg-primary text-white border-3 border-primary font-bold text-sm select-none"
       style={props.itemStyle || {}}
     >
       {props.children}

@@ -108,7 +108,7 @@ export function buildTokenRound(raw: string, seed: number) {
 
   if (unique.length !== tokens.length) return null; // has duplicates
   if (unique.length < 4) return null;
-  if (unique.length > 12) return null;
+  if (unique.length > 10) return null;
 
   // final safety
   if (unique.some((t) => t.length > 18)) return null;

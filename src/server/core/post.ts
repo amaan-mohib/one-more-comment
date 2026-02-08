@@ -9,6 +9,8 @@ const subreddits = [
   'explainlikeimfive',
 ];
 
+const batchSize = 3;
+
 export const createPost = async () => {
   const posts = await Promise.all(
     subreddits.map((subreddit) => {
@@ -27,8 +29,8 @@ export const createPost = async () => {
   const shuffledPosts = shuffle(posts.flat(), seed);
 
   const comments = [];
-  for (let i = 0; i < shuffledPosts.length; i += 5) {
-    const batch = shuffledPosts.slice(i, i + 5);
+  for (let i = 0; i < shuffledPosts.length; i += batchSize) {
+    const batch = shuffledPosts.slice(i, i + batchSize);
     const batchPromises = batch.map((post) =>
       reddit
         .getComments({
@@ -46,8 +48,14 @@ export const createPost = async () => {
 
   const filteredComments = filterComments(comments, seed);
 
+  const formattedDate = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
   return await reddit.submitCustomPost({
-    title: 'one-more-comment',
+    title: `1 More Comment - ${formattedDate}`,
     postData: {
       data: filteredComments,
       seed,

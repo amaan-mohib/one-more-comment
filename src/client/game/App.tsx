@@ -1,4 +1,4 @@
-import { context, showToast } from '@devvit/web/client';
+import { context, navigateTo, showToast } from '@devvit/web/client';
 import { useEffect, useReducer, useState } from 'react';
 import { buildTokenRound } from '../../shared/data-gen';
 import { GamePostData } from '../../shared/types/api';
@@ -300,12 +300,17 @@ export const App = () => {
   const nextRoundScreen = state.endScreen.show && (
     <div className="flex flex-col gap-4">
       <div className="bg-card flex items-center justify-center p-3 rounded-xl">
-        <iframe
-          src={`${state.data?.url?.replace('www.', 'embed.')}?embed=true`}
-          scrolling="no"
-          height={240}
-          style={{ border: 'none', width: '100%', borderRadius: 4 }}
-        ></iframe>
+        {state.data?.url && (
+          <iframe
+            src={`${state.data?.url?.replace('www.', 'embed.')}?embed=true`}
+            scrolling="no"
+            height={240}
+            style={{ border: 'none', width: '100%', borderRadius: 4 }}
+            onClick={() => {
+              navigateTo(state.data?.url || '');
+            }}
+          />
+        )}
       </div>
       <div className="text-secondary text-xs text-center uppercase tracking-widest font-bold">
         Accuracy: {(state.endScreen.score * 100).toFixed(0)}%

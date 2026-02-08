@@ -31,6 +31,14 @@
       }
     ]
   },
+  "scheduler": {
+    "tasks": {
+      "postScheduler": {
+        "cron": "0 0 * * *",
+        "endpoint": "/internal/on-app-install"
+      }
+    }
+  },
   "triggers": {
     "onAppInstall": "/internal/on-app-install"
   },
